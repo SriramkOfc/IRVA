@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRVA — Traditional wear, delivered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --silk: #F2E8DC;
+    --silk-deep: #EAD9C4;
+    --ink: #1C1714;
+    --ink-soft: #4A4038;
+    --oxblood: #7A1F2B;
+    --gold: #A8823C;
+    --sage: #8A9A85;
+    --line: rgba(28,23,20,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--silk);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .display {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+  }
+
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--oxblood);
+  }
+
+  /* ---------- NAV ---------- */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    position: sticky;
+    top: 0;
+    background: rgba(242,232,220,0.88);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+  }
+
+  .nav-links a { opacity: 0.75; transition: opacity 0.25s; }
+  .nav-links a:hover { opacity: 1; }
+
+  .nav-cta {
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--ink);
+    padding: 9px 20px;
+    border-radius: 999px;
+    transition: all 0.25s;
+  }
+  .nav-cta:hover { background: var(--ink); color: var(--silk); }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    nav { padding: 20px 24px; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 96px 48px 64px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 64px;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow { margin-bottom: 22px; }
+
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    margin-bottom: 26px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--oxblood);
+  }
+
+  .hero p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 440px;
+    margin-bottom: 36px;
+  }
+
+  .hero-actions { display: flex; gap: 14px; align-items: center; }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--silk);
+    padding: 15px 30px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.25s, background 0.25s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--oxblood); transform: translateY(-1px); }
+
+  .btn-ghost {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+  }
+
+  .hero-visual {
+    position: relative;
+    aspect-ratio: 3/4;
+    border-radius: 2px;
+    overflow: hidden;
+    background: linear-gradient(165deg, var(--oxblood) 0%, #5a1620 100%);
+  }
+
+  .hero-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(115deg, transparent 0px, transparent 38px, rgba(168,130,60,0.18) 38px, rgba(168,130,60,0.18) 40px);
+  }
+
+  .hero-visual-tag {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    background: var(--silk);
+    color: var(--ink);
+    padding: 14px 18px;
+    border-radius: 2px;
+    max-width: 240px;
+  }
+
+  .hero-visual-tag .t1 { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 4px; }
+  .hero-visual-tag .t2 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 56px 24px 40px; gap: 40px; }
+    .hero-visual { aspect-ratio: 4/3; }
+  }
+
+  /* ---------- FABRIC STRIP (signature element) ---------- */
+  .fabric-strip-wrap {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 22px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .fabric-strip-label {
+    position: absolute;
+    left: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--silk);
+    padding-right: 24px;
+    z-index: 2;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .fabric-strip {
+    display: flex;
+    gap: 14px;
+    animation: scroll-strip 38s linear infinite;
+    width: max-content;
+    padding-left: 220px;
+  }
+
+  @keyframes scroll-strip {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .swatch {
+    width: 92px;
+    height: 64px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 9px;
+  }
+  .swatch span {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fabric-strip { animation: none; }
+  }
+
+  @media (max-width: 768px) {
+    .fabric-strip-label { display: none; }
+    .fabric-strip { padding-left: 24px; }
+  }
+
+  /* ---------- COLLECTIONS ---------- */
+  .section {
+    padding: 90px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 48px;
+    gap: 24px;
+  }
+
+  .section-head h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 500;
+  }
+
+  .section-head p {
+    color: var(--ink-soft);
+    font-size: 14px;
+    max-width: 280px;
+    line-height: 1.5;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .section { padding: 56px 24px; } .grid { gap: 16px; } }
+
+  .card {
+    cursor: pointer;
+  }
+
+  .card-img {
+    aspect-ratio: 3/4;
+    border-radius: 2px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+  }
+  .card:hover .card-img { transform: translateY(-4px); }
+
+  .card-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+
+  .badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--silk);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+
+  .card-store {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: rgba(242,232,220,0.92);
+    font-weight: 600;
+  }
+
+  .card-title { font-size: 14.5px; font-weight: 500; margin-bottom: 3px; }
+  .card-meta { font-size: 12.5px; color: var(--ink-soft); display: flex; justify-content: space-between; }
+  .card-price { font-weight: 600; color: var(--ink); }
+
+  /* ---------- TRUST STRIP ---------- */
+  .trust {
+    background: var(--ink);
+    color: var(--silk);
+    padding: 70px 48px;
+  }
+
+  .trust-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+
+  @media (max-width: 768px) { .trust-grid { grid-template-columns: 1fr; gap: 36px; } .trust { padding: 56px 24px; } }
+
+  .trust-item .display { font-size: 26px; font-weight: 500; margin-bottom: 10px; }
+  .trust-item p { font-size: 14px; color: rgba(242,232,220,0.65); line-height: 1.6; max-width: 320px; }
+
+  /* ---------- FIT NOTE BAND ---------- */
+  .fit-band {
+    background: var(--silk-deep);
+    padding: 80px 48px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fit-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .fit-inner h2 {
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 500;
+    margin-bottom: 18px;
+    line-height: 1.2;
+  }
+
+  .fit-inner p {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .fit-pills { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .pill {
+    border: 1px solid var(--gold);
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 600px) { .fit-band { padding: 56px 24px; } }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding: 56px 48px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  footer .logo { margin-bottom: 8px; }
+  footer .foot-tag { font-size: 13px; color: var(--ink-soft); max-width: 280px; line-height: 1.5; }
+  .foot-links { display: flex; gap: 28px; font-size: 13px; color: var(--ink-soft); }
+
+  @media (max-width: 600px) { footer { padding: 40px 24px 32px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">IRVA</div>
+  <div class="nav-links">
+    <a href="#">Sarees</a>
+    <a href="#">Lehengas</a>
+    <a href="#">Festival</a>
+    <a href="#">Boutiques</a>
+  </div>
+  <a href="#" class="nav-cta">Sign in</a>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow hero-eyebrow">Curated from Sydney's finest boutiques</div>
+    <h1 class="display">Traditional wear,<br><em>worn your way.</em></h1>
+    <p>IRVA brings the city's trusted sarees and lehenga houses online — with real measurements, honest fabric notes, and returns that don't punish you for trying.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Shop the edit</a>
+      <a href="#" class="btn-ghost">How fit works</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-visual-tag">
+      <div class="t1">Festival edit</div>
+      <div class="t2 display">Kanchipuram silk, hand-verified drape</div>
+    </div>
+  </div>
+</section>
+
+<div class="fabric-strip-wrap">
+  <div class="fabric-strip-label">Fabric notes —</div>
+  <div class="fabric-strip" id="fabricStrip"></div>
+</div>
+
+<section class="section">
+  <div class="section-head">
+    <h2 class="display">This week's edit</h2>
+    <p>Pulled from boutiques across Parramatta and Harris Park, updated daily.</p>
+  </div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<div class="trust">
+  <div class="trust-grid">
+    <div class="trust-item">
+      <div class="display">Real measurements</div>
+      <p>Every listing carries garment dimensions taken by the boutique, not a size chart guess.</p>
+    </div>
+    <div class="trust-item">
+      <div class="display">Returns, simplified</div>
+      <p>7 days to send it back. We hold the return cost, refund the rest — no surprises at the counter.</p>
+    </div>
+    <div class="trust-item">
+      <div class="display">Vetted boutiques only</div>
+      <p>We visit every store before listing them. If it's on IRVA, we'd buy it ourselves.</p>
+    </div>
+  </div>
+</div>
+
+<div class="fit-band">
+  <div class="fit-inner">
+    <div class="eyebrow" style="margin-bottom:16px;">Before you buy</div>
+    <h2 class="display">Not sure how it'll sit on you?</h2>
+    <p>Send us your height and usual blouse size — we'll tell you honestly if a piece will work, before you spend a thing. No algorithm guessing, just someone who's seen the fabric in hand.</p>
+    <div class="fit-pills">
+      <span class="pill">Ask before you buy</span>
+      <span class="pill">Garment-true measurements</span>
+      <span class="pill">Easy exchanges</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="logo display">IRVA</div>
+    <div class="foot-tag">A marketplace for South Asian traditional wear, built on the boutiques you already trust.</div>
+  </div>
+  <div class="foot-links">
+    <a href="#">For boutiques</a>
+    <a href="#">Returns</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // Fabric swatches — material-referenced palette, not random colors
+  const fabrics = [
+    { name: 'Kanchipuram silk', color: '#7A1F2B' },
+    { name: 'Banarasi brocade', color: '#A8823C' },
+    { name: 'Organza', color: '#C9A876' },
+    { name: 'Chiffon georgette', color: '#8A9A85' },
+    { name: 'Tussar silk', color: '#B89968' },
+    { name: 'Mysore crepe', color: '#5C2430' },
+    { name: 'Net embroidered', color: '#3F4A3C' },
+    { name: 'Cotton ikat', color: '#9C5A3C' },
+  ];
+  const strip = document.getElementById('fabricStrip');
+  const doubled = [...fabrics, ...fabrics];
+  strip.innerHTML = doubled.map(f =>
+    `<div class="swatch" style="background:${f.color}"><span>${f.name}</span></div>`
+  ).join('');
+
+  // Product grid — mock listings, store-attributed, mid price band
+  const products = [
+    { title: 'Vermilion Kanchipuram Saree', store: 'Mayuri Silks', price: 245, badge: 'New', color: '#7A1F2B' },
+    { title: 'Antique Gold Banarasi Lehenga', store: 'Valampuri', price: 280, badge: 'Festival', color: '#A8823C' },
+    { title: 'Sage Organza Half-Saree', store: 'Mayuri Silks', price: 165, badge: null, color: '#8A9A85' },
+    { title: 'Ivory Tussar Saree, Zari Border', store: 'Pothys Sydney', price: 210, badge: 'Limited', color: '#C9A876' },
+    { title: 'Maroon Mysore Silk Saree', store: 'Valampuri', price: 195, badge: null, color: '#5C2430' },
+    { title: 'Emerald Net Lehenga, Hand Embroidery', store: 'Mayuri Silks', price: 290, badge: 'New', color: '#3F4A3C' },
+    { title: 'Rust Cotton Ikat Saree', store: 'Pothys Sydney', price: 150, badge: null, color: '#9C5A3C' },
+    { title: 'Blush Chiffon Half-Saree', store: 'Valampuri', price: 175, badge: null, color: '#C9A8A0' },
+  ];
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = products.map(p => `
+    <div class="card">
+      <div class="card-img" style="background:linear-gradient(160deg, ${p.color} 0%, ${p.color}cc 100%);">
+        ${p.badge ? `<div class="badge">${p.badge}</div>` : ''}
+        <div class="card-store">${p.store}</div>
+      </div>
+      <div class="card-title">${p.title}</div>
+      <div class="card-meta"><span>${p.store}</span><span class="card-price">$${p.price}</span></div>
+    </div>
+  `).join('');
+</script>
+
+</body>
+</html>
