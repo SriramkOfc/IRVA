@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRVA Timeline Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--silk:#F2E8DC;--ink:#1C1714;--ink-soft:#4A4038;--oxblood:#7A1F2B;--gold:#A8823C;--sage:#8A9A85;--green:#4a7c5e;--red:#8B2020;--line:rgba(28,23,20,0.12)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--silk);color:var(--ink);font-family:'Inter',sans-serif;padding:40px 28px;-webkit-font-smoothing:antialiased;max-width:900px;margin:0 auto}
+  h1{font-family:'Fraunces',serif;font-size:32px;font-weight:600;margin-bottom:4px}
+  .subtitle{color:var(--ink-soft);font-size:13px;margin-bottom:8px}
+
+  .status-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;margin-top:20px}
+  .stat{background:rgba(255,255,255,0.5);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+  .stat .val{font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin-bottom:2px}
+  .stat .lbl{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft)}
+  .stat.ahead .val{color:var(--green)}.stat.behind .val{color:var(--red)}.stat.warn .val{color:var(--gold)}
+
+  .week-block{margin-bottom:28px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+  .week-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--ink);color:var(--silk);cursor:pointer;gap:12px}
+  .week-header.current{background:var(--oxblood)}
+  .week-header.past{background:rgba(28,23,20,0.5)}
+  .week-header.blocked{background:#6b4c1e}
+  .week-title{font-family:'Fraunces',serif;font-size:16px;font-weight:500}
+  .week-dates{font-size:11px;opacity:0.7;letter-spacing:0.04em}
+  .week-meta{display:flex;align-items:center;gap:10px}
+  .week-badge{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.15);white-space:nowrap}
+  .week-progress{font-size:12px;opacity:0.8;white-space:nowrap}
+
+  .week-body{padding:16px 18px;background:rgba(255,255,255,0.35)}
+  .week-focus{font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
+
+  .task{display:grid;grid-template-columns:22px 1fr auto auto;gap:8px;align-items:start;padding:10px 12px;background:rgba(255,255,255,0.55);border-radius:6px;border:1px solid var(--line);margin-bottom:6px;cursor:pointer;user-select:none;transition:background 0.15s}
+  .task:hover{background:rgba(255,255,255,0.8)}
+  .task.done{background:rgba(28,23,20,0.05)}
+  .task.done .task-text{opacity:0.4;text-decoration:line-through;text-decoration-color:var(--ink-soft)}
+  .task.today{border-left:3px solid var(--oxblood)}
+  .task.blocked-task{border-left:3px solid var(--gold);opacity:0.7;cursor:default}
+
+  .chk{width:16px;height:16px;border:1.5px solid var(--ink);border-radius:3px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
+  .task.done .chk{background:var(--ink)}.task.done .chk::after{content:'✓';color:var(--silk);font-size:10px}
+
+  .task-text{font-size:13px;line-height:1.45}
+  .task-text .sub{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .effort{font-size:10px;color:var(--ink-soft);white-space:nowrap;padding-top:3px}
+
+  .tag{font-size:10px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;padding:2px 7px;border-radius:999px;white-space:nowrap;align-self:start}
+  .tag.legal{background:#E8D5C4;color:#6B3A2A}.tag.tech{background:#D5E0D8;color:#2A4A35}
+  .tag.ops{background:#D8D5E8;color:#352A6B}.tag.mkt{background:#E8E0D5;color:#6B5A2A}
+  .tag.sales{background:#D5E8E0;color:#2A6B4A}.tag.block{background:#F0E0C0;color:#7A5010}
+
+  .life-event{background:rgba(168,130,60,0.12);border:1px solid rgba(168,130,60,0.3);border-radius:6px;padding:8px 12px;font-size:12px;color:#6B5010;margin-bottom:6px;font-weight:500}
+
+  .rakhi-countdown{background:var(--oxblood);color:white;border-radius:8px;padding:16px 20px;margin-bottom:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .rakhi-countdown .big{font-family:'Fraunces',serif;font-size:28px;font-weight:600}
+  .rakhi-countdown .small{font-size:12px;opacity:0.8}
+  .rakhi-countdown .right{text-align:right}
+
+  .honest-note{background:rgba(28,23,20,0.06);border-left:3px solid var(--oxblood);padding:12px 16px;border-radius:0 6px 6px 0;margin-bottom:28px;font-size:13px;line-height:1.6;color:var(--ink-soft)}
+  .honest-note strong{color:var(--ink)}
+
+  @media(max-width:600px){
+    body{padding:24px 16px}
+    .status-bar{grid-template-columns:repeat(2,1fr)}
+    .week-header{flex-direction:column;align-items:flex-start;gap:6px}
+    .task{grid-template-columns:22px 1fr}
+    .effort,.tag{display:none}
+  }
+</style>
+</head>
+<body>
+
+<h1>IRVA · Timeline to Rakhi</h1>
+<p class="subtitle">Today: June 19, 2026 · Target: August 28, 2026 · 10 weeks · ~6 usable</p>
+
+<div class="honest-note">
+  <strong>Honest constraints factored in:</strong> Bali trip late July (~1 week out), SCU placement starts Aug 17 (heavy cognitive load), passport renewal and ACS sign-off still pending, current full-time job. This plan assumes <strong>5–8 hrs/week</strong> on IRVA — evenings and weekends only. If a week slips, the red indicator tells you. Don't compensate by cramming — reprioritise instead.
+</div>
+
+<div class="rakhi-countdown">
+  <div><div class="big" id="daysLeft">--</div><div class="small">days to Raksha Bandhan</div></div>
+  <div class="right"><div class="big" id="weeksLeft">--</div><div class="small">usable weeks remaining</div></div>
+</div>
+
+<div class="status-bar">
+  <div class="stat" id="statDone"><div class="val" id="statDoneVal">0</div><div class="lbl">Tasks done</div></div>
+  <div class="stat" id="statDue"><div class="val" id="statDueVal">0</div><div class="lbl">Due this week</div></div>
+  <div class="stat" id="statBehind"><div class="val" id="statBehindVal">0</div><div class="lbl">Overdue</div></div>
+  <div class="stat" id="statPct"><div class="val" id="statPctVal">0%</div><div class="lbl">Overall progress</div></div>
+</div>
+
+<!-- WEEK 1 -->
+<div class="week-block">
+  <div class="week-header current" onclick="toggleWeek('w1')">
+    <div><div class="week-title">Week 1 — Foundation Sprint</div><div class="week-dates">Jun 19 – Jun 25</div></div>
+    <div class="week-meta"><span class="week-badge">🔴 This week</span><span class="week-progress" id="wp-w1"></span></div>
+  </div>
+  <div class="week-body" id="wb-w1">
+    <div class="week-focus">Focus: All legal and compliance. Nothing else until these are done.</div>
+    <div class="task today" data-id="w1t1" data-week="w1"><div class="chk"></div><div class="task-text">Register ABN via business.gov.au<div class="sub">Takes 20 mins. Do it today.</div></div><span class="effort">20 min</span><span class="tag legal">Legal</span></div>
+    <div class="task today" data-id="w1t2" data-week="w1"><div class="chk"></div><div class="task-text">Register business name "IRVA" with ASIC<div class="sub">Same session as ABN. ~$39 for 1 yr.</div></div><span class="effort">10 min</span><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="w1t3" data-week="w1"><div class="chk"></div><div class="task-text">Open business bank account<div class="sub">Wise Business or ING — free, online, no branch needed</div></div><span class="effort">30 min</span><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="w1t4" data-week="w1"><div class="chk"></div><div class="task-text">Purchase legal template bundle from LawPath<div class="sub">T&Cs + Privacy Policy + Return Policy + Partner Agreement. ~$200–400.</div></div><span class="effort">1 hr</span><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="w1t5" data-week="w1"><div class="chk"></div><div class="task-text">Set up Stripe account linked to ABN<div class="sub">Free. Needs ABN done first.</div></div><span class="effort">20 min</span><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="w1t6" data-week="w1"><div class="chk"></div><div class="task-text">Set up Australia Post MyPost Business account<div class="sub">Free. No contract. Just register.</div></div><span class="effort">20 min</span><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<!-- WEEK 2 -->
+<div class="week-block">
+  <div class="week-header" onclick="toggleWeek('w2')">
+    <div><div class="week-title">Week 2 — First Boutique Contact</div><div class="week-dates">Jun 26 – Jul 2</div></div>
+    <div class="week-meta"><span class="week-badge">Boutique</span><span class="week-progress" id="wp-w2"></span></div>
+  </div>
+  <div class="week-body" id="wb-w2" style="display:none">
+    <div class="week-focus">Focus: One real conversation with one boutique. That's the only metric that matters this week.</div>
+    <div class="task" data-id="w2t1" data-week="w2"><div class="chk"></div><div class="task-text">Walk into Mayuri Silks or Valampuri — no pitch, just questions<div class="sub">"Do people ask you to ship? What happens when they do?" Bring phone with mockup.</div></div><span class="effort">1–2 hrs</span><span class="tag sales">Sales</span></div>
+    <div class="task" data-id="w2t2" data-week="w2"><div class="chk"></div><div class="task-text">Customise legal templates for IRVA (fill in your ABN, entity name, return terms)<div class="sub">Don't let this drag — one evening max</div></div><span class="effort">2 hrs</span><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="w2t3" data-week="w2"><div class="chk"></div><div class="task-text">Decide: Shopify Basic vs custom build<div class="sub">Shopify = faster, $39/mo. Custom = more control, more time. Decide and commit.</div></div><span class="effort">1 hr</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w2t4" data-week="w2"><div class="chk"></div><div class="task-text">Set up Facebook Business Manager + Ads account<div class="sub">Free. Just the account setup — no spending yet.</div></div><span class="effort">30 min</span><span class="tag mkt">Marketing</span></div>
+  </div>
+</div>
+
+<!-- WEEK 3 -->
+<div class="week-block">
+  <div class="week-header" onclick="toggleWeek('w3')">
+    <div><div class="week-title">Week 3 — Sign Boutique + Start Build</div><div class="week-dates">Jul 3 – Jul 9</div></div>
+    <div class="week-meta"><span class="week-badge">Build starts</span><span class="week-progress" id="wp-w3"></span></div>
+  </div>
+  <div class="week-body" id="wb-w3" style="display:none">
+    <div class="week-focus">Focus: Get a boutique signed. Start the real website build. These must run in parallel.</div>
+    <div class="task" data-id="w3t1" data-week="w3"><div class="chk"></div><div class="task-text">Sign first boutique partner agreement<div class="sub">Use the LawPath template. Counter-sign. Keep a copy.</div></div><span class="effort">1 hr</span><span class="tag sales">Sales</span></div>
+    <div class="task" data-id="w3t2" data-week="w3"><div class="chk"></div><div class="task-text">Photograph 20–30 pieces from boutique ($150–300 range only)<div class="sub">Women's sarees + lehengas first. Use natural light. Measure each piece.</div></div><span class="effort">3–4 hrs</span><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="w3t3" data-week="w3"><div class="chk"></div><div class="task-text">Begin website build (Shopify or custom)<div class="sub">Homepage + product listing template + checkout. No fancy features yet.</div></div><span class="effort">4–6 hrs</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w3t4" data-week="w3"><div class="chk"></div><div class="task-text">Order branded IRVA poly mailers (50–100)<div class="sub">~$0.80–1.20 each. Plain kraft or custom printed. Allow 1–2 week delivery.</div></div><span class="effort">30 min</span><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="w3t5" data-week="w3"><div class="chk"></div><div class="task-text">Populate first 5 product listings using the schema<div class="sub">Real measurements, real photos, real drape notes from boutique staff</div></div><span class="effort">2–3 hrs</span><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<!-- WEEK 4 -->
+<div class="week-block">
+  <div class="week-header" onclick="toggleWeek('w4')">
+    <div><div class="week-title">Week 4 — Website Live (Internal)</div><div class="week-dates">Jul 10 – Jul 16</div></div>
+    <div class="week-meta"><span class="week-badge">First live test</span><span class="week-progress" id="wp-w4"></span></div>
+  </div>
+  <div class="week-body" id="wb-w4" style="display:none">
+    <div class="week-focus">Focus: Website live enough to place a real order internally. Not public. Just functional.</div>
+    <div class="task" data-id="w4t1" data-week="w4"><div class="chk"></div><div class="task-text">Website fully functional — browse, add to cart, checkout, payment<div class="sub">Doesn't need to look perfect. Needs to work end-to-end.</div></div><span class="effort">4–6 hrs</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w4t2" data-week="w4"><div class="chk"></div><div class="task-text">Place 2–3 test orders yourself<div class="sub">Real payment → real label → boutique packs → real pickup → real delivery</div></div><span class="effort">2 hrs</span><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="w4t3" data-week="w4"><div class="chk"></div><div class="task-text">Build basic admin view — add/edit/remove products, see orders<div class="sub">Your internal tool. Doesn't need to be pretty.</div></div><span class="effort">3–4 hrs</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w4t4" data-week="w4"><div class="chk"></div><div class="task-text">Build store view — boutique sees their orders + packing instructions<div class="sub">Read-only. Order comes in → boutique gets notified with label PDF</div></div><span class="effort">2–3 hrs</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w4t5" data-week="w4"><div class="chk"></div><div class="task-text">Plan first Meta ad — audience, creative brief, budget<div class="sub">Don't spend yet. Just have the ad ready to activate.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+  </div>
+</div>
+
+<!-- WEEK 5 — BALI BUFFER -->
+<div class="week-block">
+  <div class="week-header blocked" onclick="toggleWeek('w5')">
+    <div><div class="week-title">Week 5 — Bali / Buffer Week</div><div class="week-dates">Jul 17 – Jul 23</div></div>
+    <div class="week-meta"><span class="week-badge">🌴 Low output</span><span class="week-progress" id="wp-w5"></span></div>
+  </div>
+  <div class="week-body" id="wb-w5" style="display:none">
+    <div class="week-focus">⚠️ Bali trip likely this week. Planned as buffer — if you're ahead, great. If you're behind on weeks 1–4, use this to catch up on the lightweight tasks only.</div>
+    <div class="life-event">🌴 Bali trip — minimal IRVA work expected</div>
+    <div class="task blocked-task" data-id="w5t1" data-week="w5"><div class="chk"></div><div class="task-text">Catch up on anything from weeks 1–4 that slipped<div class="sub">Lightweight only — admin, emails, planning. No building.</div></div><span class="effort">Optional</span><span class="tag block">Buffer</span></div>
+    <div class="task blocked-task" data-id="w5t2" data-week="w5"><div class="chk"></div><div class="task-text">Social content for Rakhi — draft 3 posts in advance<div class="sub">Can do this from Bali on phone. Schedule for Aug 20–27.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+  </div>
+</div>
+
+<!-- WEEK 6 -->
+<div class="week-block">
+  <div class="week-header" onclick="toggleWeek('w6')">
+    <div><div class="week-title">Week 6 — Soft Launch</div><div class="week-dates">Jul 24 – Jul 30</div></div>
+    <div class="week-meta"><span class="week-badge">Soft launch</span><span class="week-progress" id="wp-w6"></span></div>
+  </div>
+  <div class="week-body" id="wb-w6" style="display:none">
+    <div class="week-focus">Focus: Open to personal network only. Fix everything that breaks. Not public yet.</div>
+    <div class="task" data-id="w6t1" data-week="w6"><div class="chk"></div><div class="task-text">Share website link with 10–15 trusted people (WhatsApp, DMs)<div class="sub">Ask them to try browsing + placing an order. Note every friction point.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w6t2" data-week="w6"><div class="chk"></div><div class="task-text">Fix top 3 issues from internal testing<div class="sub">Checkout confusion, mobile layout, payment errors — whatever surfaces</div></div><span class="effort">3–4 hrs</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w6t3" data-week="w6"><div class="chk"></div><div class="task-text">Trademark "IRVA" application with IP Australia<div class="sub">~$250. Online form. Do it before you go public.</div></div><span class="effort">1 hr</span><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="w6t4" data-week="w6"><div class="chk"></div><div class="task-text">Second boutique conversation — kids wear focus<div class="sub">Now you have a live site to show them. Much easier pitch.</div></div><span class="effort">1–2 hrs</span><span class="tag sales">Sales</span></div>
+  </div>
+</div>
+
+<!-- WEEK 7 — SCU STARTS -->
+<div class="week-block">
+  <div class="week-header blocked" onclick="toggleWeek('w7')">
+    <div><div class="week-title">Week 7 — SCU Placement Begins</div><div class="week-dates">Jul 31 – Aug 6</div></div>
+    <div class="week-meta"><span class="week-badge">⚠️ Heavy week</span><span class="week-progress" id="wp-w7"></span></div>
+  </div>
+  <div class="week-body" id="wb-w7" style="display:none">
+    <div class="week-focus">⚠️ SCU teaching placement starts Aug 17 but prep load hits now. Keep IRVA tasks minimal and high-leverage only.</div>
+    <div class="life-event">📚 SCU placement prep — cognitive load high this week</div>
+    <div class="task" data-id="w7t1" data-week="w7"><div class="chk"></div><div class="task-text">Activate Meta ad — small budget $10/day targeting Sydney diaspora<div class="sub">Rakhi is 3 weeks away. Start building awareness now.</div></div><span class="effort">30 min</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w7t2" data-week="w7"><div class="chk"></div><div class="task-text">Post first Instagram Reel — "this week's edit from Parramatta"<div class="sub">Phone-shot is fine. Authentic &gt; polished at this stage.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w7t3" data-week="w7"><div class="chk"></div><div class="task-text">Ensure boutique is briefed and ready for real orders<div class="sub">They have mailers, know the process, have your number</div></div><span class="effort">30 min</span><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<!-- WEEK 8 -->
+<div class="week-block">
+  <div class="week-header" onclick="toggleWeek('w8')">
+    <div><div class="week-title">Week 8 — Public Launch</div><div class="week-dates">Aug 7 – Aug 13</div></div>
+    <div class="week-meta"><span class="week-badge">🚀 Go public</span><span class="week-progress" id="wp-w8"></span></div>
+  </div>
+  <div class="week-body" id="wb-w8" style="display:none">
+    <div class="week-focus">Focus: Website goes public. Ads running. Handle first real public orders.</div>
+    <div class="task" data-id="w8t1" data-week="w8"><div class="chk"></div><div class="task-text">Remove any "soft launch" restrictions — site fully public<div class="sub">Double check mobile, checkout, email confirmations all work</div></div><span class="effort">1 hr</span><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="w8t2" data-week="w8"><div class="chk"></div><div class="task-text">Post in Sydney diaspora Facebook groups — IRVA launch announcement<div class="sub">South Asian community groups, desi mums groups, etc.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w8t3" data-week="w8"><div class="chk"></div><div class="task-text">Handle first public orders — monitor every step personally<div class="sub">Something will go wrong. Catch it fast and fix it.</div></div><span class="effort">Ongoing</span><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<!-- WEEK 9 — SCU HEAVY -->
+<div class="week-block">
+  <div class="week-header blocked" onclick="toggleWeek('w9')">
+    <div><div class="week-title">Week 9 — SCU Placement Active</div><div class="week-dates">Aug 14 – Aug 20</div></div>
+    <div class="week-meta"><span class="week-badge">⚠️ SCU active</span><span class="week-progress" id="wp-w9"></span></div>
+  </div>
+  <div class="week-body" id="wb-w9" style="display:none">
+    <div class="life-event">📚 SCU teaching placement Aug 17 — IRVA is now mostly operational, not build mode</div>
+    <div class="week-focus">By this point IRVA should be running. Your job is order fulfilment and customer replies, not building.</div>
+    <div class="task" data-id="w9t1" data-week="w9"><div class="chk"></div><div class="task-text">Rakhi collection content push — 3 posts across Instagram + Facebook<div class="sub">Gifting angle. Sister buying for herself. Schedule in advance.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w9t2" data-week="w9"><div class="chk"></div><div class="task-text">Respond to every customer query within 4 hrs<div class="sub">This is your reputation-building moment. Speed matters more than polish.</div></div><span class="effort">Daily</span><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<!-- WEEK 10 — RAKHI -->
+<div class="week-block">
+  <div class="week-header" onclick="toggleWeek('w10')">
+    <div><div class="week-title">Week 10 — Rakhi Week</div><div class="week-dates">Aug 21 – Aug 28</div></div>
+    <div class="week-meta"><span class="week-badge">🪢 Rakhi Aug 28</span><span class="week-progress" id="wp-w10"></span></div>
+  </div>
+  <div class="week-body" id="wb-w10" style="display:none">
+    <div class="week-focus">Peak push. All orders cut off by Aug 24 to guarantee delivery before Rakhi.</div>
+    <div class="task" data-id="w10t1" data-week="w10"><div class="chk"></div><div class="task-text">Order cutoff reminder — "order by Aug 24 for Rakhi delivery"<div class="sub">Post across all channels. Add banner to website.</div></div><span class="effort">30 min</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w10t2" data-week="w10"><div class="chk"></div><div class="task-text">Fulfil all Rakhi orders — monitor closely, escalate delays immediately<div class="sub">Personal responsibility. No dropped balls this week.</div></div><span class="effort">Daily</span><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="w10t3" data-week="w10"><div class="chk"></div><div class="task-text">Collect every review and photo from Rakhi buyers<div class="sub">This becomes your Navratri marketing material in 3 weeks.</div></div><span class="effort">1 hr</span><span class="tag mkt">Marketing</span></div>
+    <div class="task" data-id="w10t4" data-week="w10"><div class="chk"></div><div class="task-text">Honest post-mortem — what worked, what didn't, what to fix before Navratri<div class="sub">Write it down. 1 page. Numbers only.</div></div><span class="effort">1 hr</span><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'irva_timeline_v1';
+const WEEK_KEYS = ['w1','w2','w3','w4','w5','w6','w7','w8','w9','w10'];
+const TODAY = new Date('2026-06-19');
+const RAKHI = new Date('2026-08-28');
+
+const WEEK_RANGES = {
+  w1:{start:new Date('2026-06-19'),end:new Date('2026-06-25')},
+  w2:{start:new Date('2026-06-26'),end:new Date('2026-07-02')},
+  w3:{start:new Date('2026-07-03'),end:new Date('2026-07-09')},
+  w4:{start:new Date('2026-07-10'),end:new Date('2026-07-16')},
+  w5:{start:new Date('2026-07-17'),end:new Date('2026-07-23')},
+  w6:{start:new Date('2026-07-24'),end:new Date('2026-07-30')},
+  w7:{start:new Date('2026-07-31'),end:new Date('2026-08-06')},
+  w8:{start:new Date('2026-08-07'),end:new Date('2026-08-13')},
+  w9:{start:new Date('2026-08-14'),end:new Date('2026-08-20')},
+  w10:{start:new Date('2026-08-21'),end:new Date('2026-08-28')},
+};
+
+function loadState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return {};}}
+function saveState(s){localStorage.setItem(STORAGE_KEY,JSON.stringify(s));}
+
+let state = loadState();
+
+function toggleWeek(id){
+  const b = document.getElementById('wb-'+id);
+  b.style.display = b.style.display==='none' ? 'block' : 'none';
+}
+
+function isWeekPast(wk){return TODAY > WEEK_RANGES[wk].end;}
+function isCurrentWeek(wk){return TODAY >= WEEK_RANGES[wk].start && TODAY <= WEEK_RANGES[wk].end;}
+
+function updateAll(){
+  const allTasks = document.querySelectorAll('.task[data-id]');
+  let totalDone=0, totalAll=0, overdue=0, dueThisWeek=0;
+
+  allTasks.forEach(t=>{
+    if(t.classList.contains('blocked-task')) return;
+    totalAll++;
+    const id = t.dataset.id;
+    const wk = t.dataset.week;
+    if(state[id]){totalDone++;t.classList.add('done');}
+    else{
+      t.classList.remove('done');
+      if(isWeekPast(wk)) overdue++;
+      if(isCurrentWeek(wk)) dueThisWeek++;
+    }
+  });
+
+  document.getElementById('statDoneVal').textContent = totalDone;
+  document.getElementById('statDueVal').textContent = dueThisWeek;
+  document.getElementById('statBehindVal').textContent = overdue;
+  document.getElementById('statPctVal').textContent = totalAll ? Math.round(totalDone/totalAll*100)+'%' : '0%';
+
+  const behind = document.getElementById('statBehind');
+  behind.className = 'stat ' + (overdue>0?'behind':'');
+
+  // week progress
+  WEEK_KEYS.forEach(wk=>{
+    const wTasks = document.querySelectorAll('.task[data-week="'+wk+'"]:not(.blocked-task)');
+    const wDone = [...wTasks].filter(t=>state[t.dataset.id]).length;
+    const el = document.getElementById('wp-'+wk);
+    if(el) el.textContent = wDone+'/'+wTasks.length;
+  });
+
+  // countdown
+  const days = Math.ceil((RAKHI-TODAY)/(1000*60*60*24));
+  document.getElementById('daysLeft').textContent = days;
+  document.getElementById('weeksLeft').textContent = Math.max(0,Math.ceil(days/7)-1);
+}
+
+document.querySelectorAll('.task[data-id]:not(.blocked-task)').forEach(t=>{
+  t.addEventListener('click',()=>{
+    const id = t.dataset.id;
+    state[id] = !state[id];
+    updateAll();
+    saveState(state);
+  });
+});
+
+// open current week by default
+WEEK_KEYS.forEach(wk=>{
+  if(!isCurrentWeek(wk)){
+    // already hidden by default via style
+  } else {
+    document.getElementById('wb-'+wk).style.display = 'block';
+  }
+});
+
+updateAll();
+</script>
+</body>
+</html>
