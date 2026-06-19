@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRVA Launch Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --silk:#F2E8DC;--ink:#1C1714;--ink-soft:#4A4038;--oxblood:#7A1F2B;--gold:#A8823C;--line:rgba(28,23,20,0.12); }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--silk);color:var(--ink);font-family:'Inter',sans-serif;padding:48px 32px;-webkit-font-smoothing:antialiased}
+  h1{font-family:'Fraunces',serif;font-size:36px;font-weight:600;margin-bottom:6px}
+  .subtitle{color:var(--ink-soft);font-size:14px;margin-bottom:20px}
+  .sync-bar{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink-soft);margin-bottom:20px;padding:8px 12px;background:rgba(255,255,255,0.5);border-radius:6px;border:1px solid var(--line)}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background 0.3s}
+  .sync-dot.synced{background:#5a9e6f}.sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite}.sync-dot.error{background:var(--oxblood)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .progress-bar-wrap{background:rgba(28,23,20,0.1);border-radius:999px;height:6px;margin-bottom:8px;overflow:hidden}
+  .progress-bar{height:100%;background:var(--ink);border-radius:999px;transition:width 0.4s ease}
+  .progress-label{font-size:12px;color:var(--ink-soft);display:flex;justify-content:space-between;margin-bottom:40px}
+  .progress-label span{font-weight:600;color:var(--ink)}
+  .phase{margin-bottom:40px;border-left:3px solid var(--line);padding-left:24px;position:relative}
+  .phase::before{content:'';position:absolute;left:-7px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--ink)}
+  .phase.hot::before{background:var(--oxblood)}.phase.peak::before{background:var(--gold)}
+  .phase-header{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+  .phase-date{font-family:'Fraunces',serif;font-size:20px;font-weight:600}
+  .phase-label{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--ink);color:var(--silk)}
+  .phase.hot .phase-label{background:var(--oxblood)}.phase.peak .phase-label{background:var(--gold);color:var(--ink)}
+  .phase-title{font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase}
+  .tasks{display:flex;flex-direction:column;gap:8px}
+  .task{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:start;padding:12px 14px;background:rgba(255,255,255,0.45);border-radius:6px;border:1px solid var(--line);cursor:pointer;transition:background 0.2s;user-select:none}
+  .task:hover{background:rgba(255,255,255,0.7)}.task.completed{background:rgba(28,23,20,0.05)}
+  .task.completed .task-text{opacity:0.45;text-decoration:line-through;text-decoration-color:var(--ink-soft)}
+  .task-check{width:18px;height:18px;border:1.5px solid var(--ink);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+  .task.completed .task-check{background:var(--ink);border-color:var(--ink)}
+  .task.completed .task-check::after{content:'✓';color:var(--silk);font-size:11px}
+  .task-text{font-size:13.5px;line-height:1.5}
+  .task-text .note{font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .tag{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;align-self:flex-start}
+  .tag.legal{background:#E8D5C4;color:#6B3A2A}.tag.tech{background:#D5E0D8;color:#2A4A35}
+  .tag.ops{background:#D8D5E8;color:#352A6B}.tag.marketing{background:#E8E0D5;color:#6B5A2A}.tag.sales{background:#D5E8E0;color:#2A6B4A}
+  .festival-badge{display:inline-block;background:var(--oxblood);color:white;font-size:11px;font-weight:600;padding:4px 12px;border-radius:999px;margin-bottom:12px}
+  .festival-badge.gold{background:var(--gold);color:var(--ink)}
+  .revenue-note{background:var(--ink);color:var(--silk);padding:20px 24px;border-radius:8px;margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .rev-item .label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6;margin-bottom:4px}
+  .rev-item .value{font-family:'Fraunces',serif;font-size:22px;font-weight:600}
+  .rev-item .sub{font-size:12px;opacity:0.6;margin-top:2px}
+  .reset-btn{margin-top:24px;font-size:12px;color:var(--ink-soft);background:none;border:1px solid var(--line);padding:6px 14px;border-radius:999px;cursor:pointer;font-family:'Inter',sans-serif}
+  .reset-btn:hover{border-color:var(--ink);color:var(--ink)}
+  @media(max-width:600px){body{padding:28px 18px}.revenue-note{grid-template-columns:1fr}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<h1>IRVA Launch Roadmap</h1>
+<p class="subtitle">Aug → Dec 2026 · Festival season launch · 50–100 sales target</p>
+<div class="sync-bar"><div class="sync-dot" id="syncDot"></div><span id="syncLabel">Loading your progress...</span></div>
+<div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+<div class="progress-label"><span id="progressText">0 of 0 tasks complete</span><span id="progressPct">0%</span></div>
+
+<div class="phase">
+  <div class="phase-header"><div class="phase-date">Now → July 31</div><div class="phase-label">Foundation</div></div>
+  <div class="phase-title">Register, sign first boutique, prep tech</div>
+  <div class="tasks">
+    <div class="task" data-id="t1"><div class="task-check"></div><div class="task-text">Register ABN + business name "IRVA" via business.gov.au<div class="note">Free, takes ~1 hour online</div></div><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="t2"><div class="task-check"></div><div class="task-text">Open a separate business bank account<div class="note">ING, Wise, or any big-4 free business account</div></div><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="t3"><div class="task-check"></div><div class="task-text">Get basic legal docs (T&Cs, Privacy Policy, Return Policy, Partner Agreement)<div class="note">LawPath or LegalVision — ~$200–400 for template bundle</div></div><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="t4"><div class="task-check"></div><div class="task-text">Walk into first Parramatta boutique with mockup website<div class="note">Mayuri Silks or Valampuri — just a conversation, not a pitch</div></div><span class="tag sales">Sales</span></div>
+    <div class="task" data-id="t5"><div class="task-check"></div><div class="task-text">Sign first boutique partner agreement, photograph 20–30 pieces in $150–300 range<div class="note">Focus: women's sarees + lehengas only to start</div></div><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="t6"><div class="task-check"></div><div class="task-text">Set up Stripe account linked to ABN for payment processing</div><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="t7"><div class="task-check"></div><div class="task-text">Set up Australia Post MyPost Business account<div class="note">Free, no contract — triggers pickup flow on each order</div></div><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="t8"><div class="task-check"></div><div class="task-text">Move IRVA mockup to real e-commerce (Shopify Basic ~$39/mo or custom build)<div class="note">Add real product listings, checkout, MyPost label automation</div></div><span class="tag tech">Tech</span></div>
+    <div class="task" data-id="t9"><div class="task-check"></div><div class="task-text">Supply boutique with branded IRVA poly mailers + packing instructions<div class="note">50–100 mailers to start, ~$0.80–1.20 each</div></div><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<div class="phase hot">
+  <div class="phase-header"><div class="phase-date">Aug 1 → Aug 27</div><div class="phase-label">Warm-up</div></div>
+  <div class="festival-badge">🪢 Raksha Bandhan — Aug 28</div>
+  <div class="phase-title">Soft launch, first real orders, fix what breaks</div>
+  <div class="tasks">
+    <div class="task" data-id="t10"><div class="task-check"></div><div class="task-text">Soft-launch to personal network only — WhatsApp, Instagram DMs<div class="note">Not public ads yet — find the operational bugs with people who'll forgive you</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t11"><div class="task-check"></div><div class="task-text">Run 5–10 test orders through the full flow end-to-end<div class="note">Order → label → boutique packs → pickup → delivery → tracking email</div></div><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="t12"><div class="task-check"></div><div class="task-text">Launch Raksha Bandhan edit — gifting angle, sister buying for herself<div class="note">Small Instagram/Facebook push to Sydney South Asian diaspora groups</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t13"><div class="task-check"></div><div class="task-text">Aim: 5–15 real orders. Document every friction point.<div class="note">What confused customers? What did the boutique get wrong? Fix before Navratri.</div></div><span class="tag ops">Ops</span></div>
+  </div>
+</div>
+
+<div class="phase hot">
+  <div class="phase-header"><div class="phase-date">Sep 1 → Sep 13</div><div class="phase-label">Pre-season</div></div>
+  <div class="festival-badge">🐘 Ganesh Chaturthi — Sep 14</div>
+  <div class="phase-title">Add kids + second boutique, content push begins</div>
+  <div class="tasks">
+    <div class="task" data-id="t14"><div class="task-check"></div><div class="task-text">Onboard second boutique — focus: kids ethnic wear (20% of catalogue)<div class="note">Lehengas for girls, kurtas for boys — parents buy early for Navratri</div></div><span class="tag sales">Sales</span></div>
+    <div class="task" data-id="t15"><div class="task-check"></div><div class="task-text">Launch Instagram Reels content — "this week's edit from Parramatta"<div class="note">Short, editorial, phone-shot is fine — authenticity over polish at this stage</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t16"><div class="task-check"></div><div class="task-text">Ganesh Chaturthi push — target Maharashtrian and South Indian diaspora<div class="note">Silk sarees, cotton sets — community Facebook groups in Sydney</div></div><span class="tag marketing">Marketing</span></div>
+  </div>
+</div>
+
+<div class="phase peak">
+  <div class="phase-header"><div class="phase-date">Sep 15 → Oct 23</div><div class="phase-label">🔥 Peak Season</div></div>
+  <div class="festival-badge gold">✨ Navratri Sep 22 · Dussehra Oct 2 · Karva Chauth Oct 10 · Diwali Oct 20</div>
+  <div class="phase-title">Maximum effort — this 5-week window is the year</div>
+  <div class="tasks">
+    <div class="task" data-id="t17"><div class="task-check"></div><div class="task-text">Navratri edit live by Sep 20 — chaniya cholis, lehengas, embroidered sets<div class="note">Different colour story each garba night — content angle that drives return visits</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t18"><div class="task-check"></div><div class="task-text">Run paid Meta ads targeting South Asian women 22–45 in Sydney/Melbourne<div class="note">Small budget — $10–20/day. Retarget website visitors from Sep 15 onward.</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t19"><div class="task-check"></div><div class="task-text">Karva Chauth push (Oct 10) — occasion dressing angle, couple gifting<div class="note">North Indian diaspora specifically — this is high-intent spend</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t20"><div class="task-check"></div><div class="task-text">Diwali collection live by Oct 13 — 7-day lead time before the festival<div class="note">Silk sarees, embellished lehengas, men's kurta sets (the 10%)</div></div><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="t21"><div class="task-check"></div><div class="task-text">Add men's basics (10%) for Diwali only — kurta sets, sherwanis<div class="note">Low SKU count — 5–8 options max. Women buy for the men in their family.</div></div><span class="tag sales">Sales</span></div>
+    <div class="task" data-id="t22"><div class="task-check"></div><div class="task-text">Handle volume — ensure boutique has enough mailers, pickup booked daily if needed</div><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="t23"><div class="task-check"></div><div class="task-text">Collect every review, every Instagram tag, every WhatsApp compliment<div class="note">This is your post-Diwali marketing asset. Screenshot everything.</div></div><span class="tag marketing">Marketing</span></div>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-header"><div class="phase-date">Nov → Dec</div><div class="phase-label">Consolidate</div></div>
+  <div class="festival-badge">🙏 Guru Nanak Jayanti Nov 5 · Christmas gifting Dec</div>
+  <div class="phase-title">Analyse, retain, plan 2027</div>
+  <div class="tasks">
+    <div class="task" data-id="t24"><div class="task-check"></div><div class="task-text">Audit every order — what sold, what sat, what returned, which boutique performed<div class="note">This data is the pitch for your next boutique partner and for GST planning</div></div><span class="tag ops">Ops</span></div>
+    <div class="task" data-id="t25"><div class="task-check"></div><div class="task-text">Email / WhatsApp every customer — "what did you think, would you buy again"<div class="note">Even 10 personal replies builds more loyalty than 1000 Instagram followers</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t26"><div class="task-check"></div><div class="task-text">Guru Nanak Jayanti (Nov 5) — Punjabi diaspora, salwar suits, dupattas</div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t27"><div class="task-check"></div><div class="task-text">Christmas gifting push — "give her a saree" angle for non-Indian partners buying gifts<div class="note">Underexplored angle, zero competition, easy to own</div></div><span class="tag marketing">Marketing</span></div>
+    <div class="task" data-id="t28"><div class="task-check"></div><div class="task-text">Register for GST only if turnover approaching $75k (unlikely Y1, but check)<div class="note">File quarterly BAS if registered</div></div><span class="tag legal">Legal</span></div>
+    <div class="task" data-id="t29"><div class="task-check"></div><div class="task-text">Trademark "IRVA" application with IP Australia (~$250 filing fee)<div class="note">Do this before you're big enough that someone else tries to register it</div></div><span class="tag legal">Legal</span></div>
+  </div>
+</div>
+
+<div class="revenue-note">
+  <div class="rev-item"><div class="label">Conservative (50 sales)</div><div class="value">~$1,750</div><div class="sub">Avg order $225 · 20% markup · ~35% return rate</div></div>
+  <div class="rev-item"><div class="label">Target (100 sales)</div><div class="value">~$3,500</div><div class="sub">Real number after shipping + returns absorbed</div></div>
+  <div class="rev-item"><div class="label">The actual goal</div><div class="value">Proof</div><div class="sub">Reviews · repeat buyers · boutique trust · data</div></div>
+</div>
+<button class="reset-btn" onclick="resetAll()">Reset all tasks</button>
+
+<script>
+const FILE_ID = '1d5qgDpMpLhhwY_eqF8dsDMRZJirB_v5u';
+let state = {};
+let saveTimer = null;
+
+const dot = document.getElementById('syncDot');
+const label = document.getElementById('syncLabel');
+
+function setSync(s, msg) { dot.className = 'sync-dot ' + s; label.textContent = msg; }
+
+function updateProgress() {
+  const all = document.querySelectorAll('.task');
+  const done = document.querySelectorAll('.task.completed').length;
+  const pct = all.length ? Math.round(done/all.length*100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' of ' + all.length + ' tasks complete';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function applyState() {
+  document.querySelectorAll('.task').forEach(t => t.classList.toggle('completed', !!state[t.dataset.id]));
+  updateProgress();
+}
+
+async function driveCall(prompt) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6', max_tokens: 1000,
+      mcp_servers: [{ type: 'url', url: 'https://drivemcp.googleapis.com/mcp/v1', name: 'gdrive' }],
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  return r.json();
+}
+
+async function load() {
+  setSync('syncing', 'Loading your progress...');
+  try {
+    const data = await driveCall('Read Google Drive file ID "' + FILE_ID + '". Return ONLY the raw JSON content, no markdown, no explanation.');
+    const txt = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const clean = txt.replace(/```json|```/g, '').trim();
+    state = JSON.parse(clean);
+    applyState();
+    setSync('synced', 'Synced · ' + new Date().toLocaleTimeString());
+  } catch(e) {
+    setSync('error', 'Could not load from Drive — check connection');
+    try { state = JSON.parse(localStorage.getItem('irva_fb') || '{}'); applyState(); } catch {}
+  }
+}
+
+async function save() {
+  setSync('syncing', 'Saving...');
+  try {
+    await driveCall('Update Google Drive file ID "' + FILE_ID + '" — overwrite its entire content with this JSON and nothing else: ' + JSON.stringify(state));
+    localStorage.setItem('irva_fb', JSON.stringify(state));
+    setSync('synced', 'Saved · ' + new Date().toLocaleTimeString());
+  } catch(e) {
+    localStorage.setItem('irva_fb', JSON.stringify(state));
+    setSync('error', 'Drive save failed — saved locally as backup');
+  }
+}
+
+document.querySelectorAll('.task').forEach(t => {
+  t.addEventListener('click', () => {
+    state[t.dataset.id] = !state[t.dataset.id];
+    t.classList.toggle('completed', state[t.dataset.id]);
+    updateProgress();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 1500);
+  });
+});
+
+async function resetAll() {
+  if (!confirm('Reset all tasks?')) return;
+  document.querySelectorAll('.task').forEach(t => { t.classList.remove('completed'); state[t.dataset.id] = false; });
+  updateProgress();
+  await save();
+}
+
+load();
+</script>
+</body>
+</html>
